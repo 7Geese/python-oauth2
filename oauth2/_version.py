@@ -4,16 +4,21 @@ manual_verstr = "1.9"
 
 
 
-auto_build_num = "0.post1"
+auto_build_num = "1"
 
 
 
 verstr = manual_verstr + "." + auto_build_num
 try:
-    from pyutil.version_class import Version as pyutil_Version
+    from packaging.version import parse
 except (ImportError, ValueError): #pragma NO COVER
-    # Maybe there is no pyutil installed.
-    from distutils.version import LooseVersion as distutils_Version
-    __version__ = distutils_Version(verstr)
+    try:
+        from pyutil.version_class import Version as pyutil_Version
+    except (ImportError, ValueError): #pragma NO COVER
+        # Maybe there is no pyutil installed.
+        from distutils.version import LooseVersion as distutils_Version
+        __version__ = distutils_Version(verstr)
+    else: #pragma NO COVER
+        __version__ = pyutil_Version(verstr)
 else: #pragma NO COVER
-    __version__ = pyutil_Version(verstr)
+    __version__ = parse(verstr)
